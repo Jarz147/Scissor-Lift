@@ -3,155 +3,738 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online JSEA Form - Sankei System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>JSEA Online Form</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f1f5f9; }
-        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        input, textarea { background: #1e293b !important; border: 1px solid #334155 !important; color: white !important; transition: all 0.2s; }
-        input:focus { border-color: #38bdf8 !important; box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2); }
-    </style>
-</head>
-<body class="p-4 md:p-10">
-    <div class="max-w-6xl mx-auto glass-card rounded-2xl shadow-2xl overflow-hidden">
-        <div class="bg-sky-600 p-6 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold">Digital JSEA Form</h1>
-                <p class="text-sky-100 text-sm">Input Job Safety Environmental Analysis Online</p>
-            </div>
-            <div class="text-right text-xs opacity-80">
-                <p>FORM/SDI/SHE/01/004/R-00</p>
-                <p>Status: Online</p>
-            </div>
-        </div>
-
-        <form id="jseaForm" class="p-6 md:p-10 space-y-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">JSEA No.</label>
-                        <input type="text" id="jsea_no" required class="w-full rounded-lg px-4 py-2.5">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Nama Kontraktor</label>
-                        <input type="text" id="contractor" required class="w-full rounded-lg px-4 py-2.5">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Departemen</label>
-                        <input type="text" id="dept" required class="w-full rounded-lg px-4 py-2.5">
-                    </div>
-                </div>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Nama Pekerjaan</label>
-                        <input type="text" id="job_name" required class="w-full rounded-lg px-4 py-2.5">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Tanggal Pelaksanaan</label>
-                        <input type="date" id="job_date" required class="w-full rounded-lg px-4 py-2.5">
-                    </div>
-                </div>
-            </div>
-
-            <div class="overflow-x-auto rounded-xl border border-slate-700">
-                <table class="w-full text-left">
-                    <thead class="bg-slate-800 text-slate-300 text-xs uppercase">
-                        <tr>
-                            <th class="p-4 border-b border-slate-700 w-12">No</th>
-                            <th class="p-4 border-b border-slate-700">Langkah Kerja & Resiko</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-700">
-                        </tbody>
-                </table>
-            </div>
-
-            <button type="button" onclick="addRow()" class="text-sky-400 text-sm font-medium hover:text-sky-300 transition">+ Tambah Urutan Kerja</button>
-
-            <div>
-                <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">APD yang Dibutuhkan</label>
-                <textarea id="apd_list" class="w-full rounded-lg px-4 py-3 h-24" placeholder="Contoh: Safety Helmet, Vest, Earplug..."></textarea>
-            </div>
-
-            <div class="flex justify-end border-t border-slate-700 pt-8">
-                <button type="submit" id="submitBtn" class="bg-sky-500 hover:bg-sky-400 text-white px-10 py-3 rounded-xl font-bold shadow-lg shadow-sky-500/20 transition-all active:scale-95">
-                    Kirim JSEA Online
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <script>
-        // --- KONFIGURASI SUPABASE ---
-        const SUPABASE_URL = 'URL_PROYEK_ANDA';
-        const SUPABASE_KEY = 'API_KEY_ANON_ANDA';
-        const supabase = collections.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        let rowCount = 0;
-        function addRow() {
-            rowCount++;
-            const tbody = document.getElementById('tableBody');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="p-4 text-center font-bold text-slate-500">${rowCount}</td>
-                <td class="p-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <textarea class="step_desc p-2 text-sm rounded bg-slate-900 border border-slate-700" placeholder="Urutan kerja" rows="2"></textarea>
-                        <textarea class="step_hazard p-2 text-sm rounded bg-slate-900 border border-slate-700" placeholder="Bahaya & Resiko" rows="2"></textarea>
-                        <textarea class="step_action col-span-1 md:col-span-2 p-2 text-sm rounded bg-slate-900 border border-slate-700" placeholder="Tindakan Rekomendasi" rows="2"></textarea>
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(row);
+        :root {
+            --line: #222;
+            --paper: #f2f2f2;
+            --header-green: #9ccd00;
         }
 
-        // Mulai dengan 2 baris
-        for(let i=0; i<2; i++) addRow();
+        * {
+            box-sizing: border-box;
+        }
 
-        // Handle Submit
-        document.getElementById('jseaForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerText = 'Mengirim...';
+        body {
+            margin: 0;
+            background: #dce3ea;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #111;
+            padding: 20px;
+        }
 
-            // Ambil data detail (table)
-            const steps = [];
-            const rows = document.querySelectorAll('#tableBody tr');
-            rows.forEach((row, index) => {
-                steps.push({
-                    no: index + 1,
-                    desc: row.querySelector('.step_desc').value,
-                    hazard: row.querySelector('.step_hazard').value,
-                    action: row.querySelector('.step_action').value
-                });
+        .toolbar {
+            max-width: 1120px;
+            margin: 0 auto 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar button {
+            border: 1px solid #1f2937;
+            background: #111827;
+            color: #fff;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .toolbar button:hover {
+            background: #1f2937;
+        }
+
+        .paper {
+            max-width: 1120px;
+            margin: 0 auto;
+            background: var(--paper);
+            border: 1px solid var(--line);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--line);
+            padding: 4px 6px;
+            vertical-align: top;
+            font-size: 12px;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 48px;
+            font-weight: 600;
+            line-height: 1;
+            margin: 8px 0 6px;
+        }
+
+        .header-subtitle {
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        .small {
+            font-size: 11px;
+        }
+
+        .green-head th {
+            background: var(--header-green);
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.1;
+            padding: 8px 6px;
+        }
+
+        .analysis td {
+            height: 50px;
+        }
+
+        .analysis .no-col {
+            width: 5%;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .analysis .wide-col {
+            width: 29%;
+        }
+
+        .analysis .mid-col {
+            width: 24%;
+        }
+
+        .analysis textarea {
+            width: 100%;
+            height: 40px;
+            border: 0;
+            background: transparent;
+            resize: none;
+            font-size: 12px;
+            font-family: inherit;
+            padding: 2px;
+        }
+
+        .ppe-box {
+            padding: 8px;
+            min-height: 186px;
+        }
+
+        .ppe-title {
+            font-size: 28px;
+            margin: 4px 0 10px;
+            font-weight: 500;
+        }
+
+        .ppe-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 6px 22px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 24px;
+            min-height: 34px;
+        }
+
+        .check-item input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            accent-color: #0f172a;
+        }
+
+        .check-item input[type="text"] {
+            border: 0;
+            background: transparent;
+            font-size: 24px;
+            width: 100%;
+            padding: 0;
+        }
+
+        .meta td {
+            height: 36px;
+            font-size: 24px;
+        }
+
+        .field-inline {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .field-inline input {
+            border: 0;
+            border-bottom: 1px dashed #444;
+            background: transparent;
+            width: 100%;
+            min-width: 40px;
+            font-size: 22px;
+            padding: 0 2px;
+        }
+
+        .field-inline input[readonly] {
+            background: #e5e7eb;
+            border-bottom: 1px solid #222;
+            cursor: not-allowed;
+        }
+
+        .signature th,
+        .signature td {
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .signature .sign-space {
+            height: 78px;
+        }
+
+        .line {
+            border-bottom: 1px solid #222;
+            width: 90%;
+            margin: 0 auto;
+            height: 1px;
+        }
+
+        .worker-list {
+            text-align: left;
+            line-height: 1.35;
+            font-size: 22px;
+            padding-left: 16px;
+        }
+
+        @media (max-width: 1000px) {
+            .header-title {
+                font-size: 34px;
+            }
+
+            .header-subtitle {
+                font-size: 24px;
+            }
+
+            .green-head th,
+            .analysis .no-col,
+            .ppe-title,
+            .check-item,
+            .meta td,
+            .signature th,
+            .signature td,
+            .field-inline input {
+                font-size: 14px;
+            }
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+            }
+
+            .toolbar {
+                display: none;
+            }
+
+            .paper {
+                max-width: 100%;
+                box-shadow: none;
+                border: 0;
+            }
+
+            @page {
+                size: A4 landscape;
+                margin: 8mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button type="button" id="saveDraft">Simpan Draft (Browser)</button>
+        <button type="button" id="loadDraft">Muat Draft</button>
+        <button type="button" id="clearDraft">Kosongkan</button>
+        <button type="button" id="submitSupabase">Submit ke Supabase</button>
+        <button type="button" onclick="window.print()">Print / Export PDF</button>
+    </div>
+
+    <form id="jseaForm" class="paper">
+        <table>
+            <tr>
+                <td style="width:18%; text-align:center;">
+                    <div style="height:105px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#2563eb;">
+                        LOGO
+                    </div>
+                </td>
+                <td style="width:52%; text-align:center;">
+                    <div class="header-title">JSEA</div>
+                    <div class="header-subtitle">(Job Safety Environmental Analysis)</div>
+                </td>
+                <td style="width:30%;">
+                    <div class="field-inline"><span>No. Dokumen:</span><input id="no_dokumen" name="no_dokumen" readonly></div>
+                    <div class="field-inline"><span>Tanggal Berlaku:</span><input id="tanggal_berlaku" name="tanggal_berlaku" readonly></div>
+                    <div class="field-inline"><span>Halaman:</span><input name="halaman"></div>
+                </td>
+            </tr>
+        </table>
+
+        <table class="analysis">
+            <thead class="green-head">
+                <tr>
+                    <th style="width:5%;">No.</th>
+                    <th style="width:29%;">Urutan pelaksanaan kerja<br>(Proses / Aktivitas)</th>
+                    <th style="width:24%;">Aspek lingkungan /<br>Bahaya K3</th>
+                    <th style="width:24%;">Dampak / Resiko K3</th>
+                    <th style="width:18%;">Tindakan rekomendasi/ <i>Recommended action</i></th>
+                </tr>
+            </thead>
+            <tbody id="analysisBody"></tbody>
+        </table>
+
+        <table>
+            <tr>
+                <td class="ppe-box">
+                    <div class="ppe-title">Alat Pelindung diri yang dibutuhkan :</div>
+                    <div class="ppe-grid">
+                        <label class="check-item"><input type="checkbox" name="ppe_helmet"><span>Helmet</span></label>
+                        <label class="check-item"><input type="checkbox" name="ppe_gas"><span>Gas/Chemical Mask</span></label>
+                        <label class="check-item"><input type="checkbox" name="ppe_gloves_chemical"><span>Chemical resistant gloves</span></label>
+
+                        <label class="check-item"><input type="checkbox" name="ppe_goggle"><span>Safety Google</span></label>
+                        <label class="check-item"><input type="checkbox" name="ppe_face_shield"><span>Face Shield</span></label>
+                        <label class="check-item"><input type="checkbox" name="ppe_heat_gloves"><span>Heat Resistant Handgloves</span></label>
+
+                        <label class="check-item"><input type="checkbox" name="ppe_glasses"><span>Safety Glasses</span></label>
+                        <label class="check-item"><input type="checkbox" name="ppe_shoes"><span>Safety shoes</span></label>
+                        <label class="check-item">
+                            <input type="checkbox" name="ppe_other_check">
+                            <span>Lain - lain, sebutkan ...</span>
+                        </label>
+
+                        <label class="check-item"><input type="checkbox" name="ppe_ear_plug"><span>Ear Plug</span></label>
+                        <label class="check-item"><input type="checkbox" name="ppe_harness"><span>Safety Harness</span></label>
+                        <label class="check-item"><input type="text" name="ppe_other_text"></label>
+
+                        <label class="check-item"><input type="checkbox" name="ppe_ear_muff"><span>Ear Muff</span></label>
+                        <label class="check-item"><input type="checkbox" name="ppe_reflector"><span>Reflektor</span></label>
+                        <span></span>
+
+                        <label class="check-item"><input type="checkbox" name="ppe_dust_mask"><span>Dust Mask</span></label>
+                        <label class="check-item"><input type="checkbox" name="ppe_latex"><span>Hand glove latex</span></label>
+                        <span></span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <table class="meta">
+            <tr>
+                <td style="width:32%;">
+                    <div class="field-inline"><span>JSEA No.</span><input id="jsea_no" name="jsea_no" readonly></div>
+                </td>
+                <td style="width:38%;">
+                    <div class="field-inline"><span>Nama pekerjaan :</span><input name="nama_pekerjaan"></div>
+                </td>
+                <td style="width:17%;" class="center">
+                    <div>Halaman ke</div>
+                </td>
+                <td style="width:13%;" class="center">
+                    <div>dari</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="field-inline"><span>Nama Kontraktor :</span><input name="nama_kontraktor"></div>
+                    <div class="field-inline"><span>(Jumlah Pekerja) :</span><input name="jumlah_pekerja"></div>
+                </td>
+                <td>
+                    <div class="field-inline"><span>Jenis pekerjaan yang dilakukan :</span><input name="jenis_pekerjaan"></div>
+                </td>
+                <td colspan="2">
+                    <div class="field-inline"><span>Baru :</span><input name="baru" style="max-width:130px;"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="field-inline"><span>DEPARTEMEN (Pemilik Pekerjaan) :</span><input name="departemen"></div>
+                </td>
+                <td>
+                    <div class="field-inline"><span>Tanggal pelaksanaan :</span><input type="date" name="tanggal_pelaksanaan"></div>
+                </td>
+                <td colspan="2">
+                    <div class="field-inline"><span>Revisi ke :</span><input name="revisi" style="max-width:130px;"></div>
+                </td>
+            </tr>
+        </table>
+
+        <table class="signature">
+            <tr>
+                <th style="width:21%;">Dibuat oleh :<br>Pelaksana pekerjaan</th>
+                <th style="width:21%;">Diperiksa oleh :<br>Pemilik pekerjaan</th>
+                <th style="width:21%;">Diperiksa oleh :<br>SHE</th>
+                <th style="width:37%;">Nama Pekerja</th>
+            </tr>
+            <tr>
+                <td class="sign-space"></td>
+                <td class="sign-space"></td>
+                <td class="sign-space"></td>
+                <td class="worker-list">
+                    1. <input name="worker1"><br>
+                    2. <input name="worker2"><br>
+                    3. <input name="worker3"><br>
+                    4. <input name="worker4"><br>
+                    5. <input name="worker5">
+                </td>
+            </tr>
+            <tr>
+                <td><div class="line"></div></td>
+                <td><div class="line"></div></td>
+                <td><div class="line"></div></td>
+                <td></td>
+            </tr>
+        </table>
+    </form>
+
+    <script>
+        const analysisBody = document.getElementById("analysisBody");
+        const draftKey = "jsea-online-draft-v1";
+        const sequenceKey = "jsea-sequence-v1";
+        const docSequenceKey = "jsea-doc-sequence-v1";
+        const SUPABASE_URL = "GANTI_DENGAN_SUPABASE_URL";
+        const SUPABASE_ANON_KEY = "GANTI_DENGAN_SUPABASE_ANON_KEY";
+        const JSEA_PREFIX = "JSEA";
+        const DOC_PREFIX = "FORM/SDI/SHE/01";
+        const DOC_REV = "R-00";
+
+        for (let no = 1; no <= 20; no += 1) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td class="no-col">${no}</td>
+                <td class="wide-col"><textarea name="aktivitas_${no}"></textarea></td>
+                <td class="mid-col"><textarea name="bahaya_${no}"></textarea></td>
+                <td class="mid-col"><textarea name="resiko_${no}"></textarea></td>
+                <td class="wide-col"><textarea name="rekomendasi_${no}"></textarea></td>
+            `;
+            analysisBody.appendChild(tr);
+        }
+
+        function collectFormData() {
+            const data = {};
+            const fields = document.querySelectorAll("input, textarea");
+            fields.forEach((el) => {
+                if (!el.name) {
+                    return;
+                }
+                if (el.type === "checkbox") {
+                    data[el.name] = el.checked;
+                } else {
+                    data[el.name] = el.value;
+                }
             });
+            return data;
+        }
 
-            const formData = {
-                jsea_no: document.getElementById('jsea_no').value,
-                job_name: document.getElementById('job_name').value,
-                contractor: document.getElementById('contractor').value,
-                dept: document.getElementById('dept').value,
-                job_date: document.getElementById('job_date').value,
-                apd: document.getElementById('apd_list').value,
-                analysis_details: steps, // Data tabel disimpan dalam bentuk JSON
-                created_at: new Date()
+        function getPeriodCode() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, "0");
+            return `${year}${month}`;
+        }
+
+        function formatJseaNo(sequence) {
+            return `${JSEA_PREFIX}-${getPeriodCode()}-${String(sequence).padStart(4, "0")}`;
+        }
+
+        function formatDocumentNo(sequence) {
+            return `${DOC_PREFIX}/${String(sequence).padStart(3, "0")}/${DOC_REV}`;
+        }
+
+        function formatTanggalIndo(dateObj) {
+            return dateObj.toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            });
+        }
+
+        function getTanggalBerlakuPlus7() {
+            const now = new Date();
+            const plus7 = new Date(now);
+            plus7.setDate(now.getDate() + 7);
+            return formatTanggalIndo(plus7);
+        }
+
+        function parseSequenceFromJseaNo(jseaNo) {
+            const match = String(jseaNo || "").match(/(\d{4})$/);
+            return match ? Number(match[1]) : 0;
+        }
+
+        function parseSequenceFromDocumentNo(docNo) {
+            const match = String(docNo || "").match(/\/(\d{3,4})\/R-\d+$/i);
+            return match ? Number(match[1]) : 0;
+        }
+
+        function getLocalNextSequence() {
+            const current = Number(localStorage.getItem(sequenceKey) || "0");
+            return current + 1;
+        }
+
+        function setLocalSequence(sequence) {
+            localStorage.setItem(sequenceKey, String(sequence));
+        }
+
+        function getLocalNextDocSequence() {
+            const current = Number(localStorage.getItem(docSequenceKey) || "0");
+            return current + 1;
+        }
+
+        function setLocalDocSequence(sequence) {
+            localStorage.setItem(docSequenceKey, String(sequence));
+        }
+
+        async function getNextJseaNo() {
+            const jseaInput = document.getElementById("jsea_no");
+            if (
+                SUPABASE_URL === "GANTI_DENGAN_SUPABASE_URL" ||
+                SUPABASE_ANON_KEY === "GANTI_DENGAN_SUPABASE_ANON_KEY"
+            ) {
+                const localNext = getLocalNextSequence();
+                return formatJseaNo(localNext);
+            }
+
+            try {
+                const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                const { data, error } = await client
+                    .from("jsea_records")
+                    .select("jsea_no")
+                    .order("created_at", { ascending: false })
+                    .limit(1);
+
+                if (error) {
+                    throw error;
+                }
+
+                const lastJseaNo = data?.[0]?.jsea_no || "";
+                const lastSequence = parseSequenceFromJseaNo(lastJseaNo);
+                const localSequence = Number(localStorage.getItem(sequenceKey) || "0");
+                const nextSequence = Math.max(lastSequence, localSequence) + 1;
+                setLocalSequence(nextSequence);
+                return formatJseaNo(nextSequence);
+            } catch (err) {
+                // Fallback ke sequence lokal jika query terakhir gagal.
+                const localNext = getLocalNextSequence();
+                return formatJseaNo(localNext);
+            } finally {
+                jseaInput.readOnly = true;
+            }
+        }
+
+        async function assignAutoJseaNo() {
+            const jseaInput = document.getElementById("jsea_no");
+            const nextNo = await getNextJseaNo();
+            jseaInput.value = nextNo;
+            jseaInput.readOnly = true;
+        }
+
+        async function getNextDocumentNo() {
+            const docInput = document.getElementById("no_dokumen");
+            if (
+                SUPABASE_URL === "GANTI_DENGAN_SUPABASE_URL" ||
+                SUPABASE_ANON_KEY === "GANTI_DENGAN_SUPABASE_ANON_KEY"
+            ) {
+                const localNext = getLocalNextDocSequence();
+                return formatDocumentNo(localNext);
+            }
+
+            try {
+                const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                const { data, error } = await client
+                    .from("jsea_records")
+                    .select("no_dokumen")
+                    .order("created_at", { ascending: false })
+                    .limit(1);
+
+                if (error) {
+                    throw error;
+                }
+
+                const lastDocNo = data?.[0]?.no_dokumen || "";
+                const lastSequence = parseSequenceFromDocumentNo(lastDocNo);
+                const localSequence = Number(localStorage.getItem(docSequenceKey) || "0");
+                const nextSequence = Math.max(lastSequence, localSequence) + 1;
+                setLocalDocSequence(nextSequence);
+                return formatDocumentNo(nextSequence);
+            } catch (err) {
+                const localNext = getLocalNextDocSequence();
+                return formatDocumentNo(localNext);
+            } finally {
+                docInput.readOnly = true;
+            }
+        }
+
+        async function assignAutoDocumentNo() {
+            const docInput = document.getElementById("no_dokumen");
+            const nextNo = await getNextDocumentNo();
+            docInput.value = nextNo;
+            docInput.readOnly = true;
+        }
+
+        function assignTanggalBerlaku() {
+            const tanggalInput = document.getElementById("tanggal_berlaku");
+            tanggalInput.value = getTanggalBerlakuPlus7();
+            tanggalInput.readOnly = true;
+        }
+
+        function buildSupabasePayload(data) {
+            const analysis_details = [];
+            for (let no = 1; no <= 20; no += 1) {
+                analysis_details.push({
+                    no,
+                    aktivitas: data[`aktivitas_${no}`] || "",
+                    bahaya: data[`bahaya_${no}`] || "",
+                    resiko: data[`resiko_${no}`] || "",
+                    rekomendasi: data[`rekomendasi_${no}`] || ""
+                });
+            }
+
+            const ppe = {
+                helmet: Boolean(data.ppe_helmet),
+                gas_chemical_mask: Boolean(data.ppe_gas),
+                chemical_resistant_gloves: Boolean(data.ppe_gloves_chemical),
+                safety_goggle: Boolean(data.ppe_goggle),
+                face_shield: Boolean(data.ppe_face_shield),
+                heat_resistant_handgloves: Boolean(data.ppe_heat_gloves),
+                safety_glasses: Boolean(data.ppe_glasses),
+                safety_shoes: Boolean(data.ppe_shoes),
+                ear_plug: Boolean(data.ppe_ear_plug),
+                safety_harness: Boolean(data.ppe_harness),
+                ear_muff: Boolean(data.ppe_ear_muff),
+                reflektor: Boolean(data.ppe_reflector),
+                dust_mask: Boolean(data.ppe_dust_mask),
+                hand_glove_latex: Boolean(data.ppe_latex),
+                other_checked: Boolean(data.ppe_other_check),
+                other_text: data.ppe_other_text || ""
             };
 
-            // Simpan ke Tabel Supabase (Nama tabel: 'jsea_records')
-            const { error } = await supabase.from('jsea_records').insert([formData]);
+            const workers = [
+                data.worker1 || "",
+                data.worker2 || "",
+                data.worker3 || "",
+                data.worker4 || "",
+                data.worker5 || ""
+            ].filter((name) => name.trim() !== "");
 
-            if (error) {
-                alert('Gagal mengirim: ' + error.message);
-            } else {
-                alert('JSEA Berhasil dikirim secara online!');
-                location.reload();
+            return {
+                no_dokumen: data.no_dokumen || "",
+                tanggal_berlaku: data.tanggal_berlaku || "",
+                halaman: data.halaman || "",
+                jsea_no: data.jsea_no || "",
+                nama_pekerjaan: data.nama_pekerjaan || "",
+                nama_kontraktor: data.nama_kontraktor || "",
+                jumlah_pekerja: data.jumlah_pekerja || "",
+                jenis_pekerjaan: data.jenis_pekerjaan || "",
+                baru: data.baru || "",
+                departemen: data.departemen || "",
+                tanggal_pelaksanaan: data.tanggal_pelaksanaan || null,
+                revisi: data.revisi || "",
+                analysis_details,
+                ppe,
+                workers,
+                raw_form: data
+            };
+        }
+
+        function applyFormData(data) {
+            const fields = document.querySelectorAll("input, textarea");
+            fields.forEach((el) => {
+                if (!el.name || !(el.name in data)) {
+                    return;
+                }
+                if (el.readOnly) {
+                    return;
+                }
+                if (el.type === "checkbox") {
+                    el.checked = Boolean(data[el.name]);
+                } else {
+                    el.value = data[el.name] || "";
+                }
+            });
+        }
+
+        document.getElementById("saveDraft").addEventListener("click", () => {
+            localStorage.setItem(draftKey, JSON.stringify(collectFormData()));
+            alert("Draft berhasil disimpan di browser ini.");
+        });
+
+        document.getElementById("loadDraft").addEventListener("click", () => {
+            const raw = localStorage.getItem(draftKey);
+            if (!raw) {
+                alert("Belum ada draft tersimpan.");
+                return;
             }
-            btn.disabled = false;
-            btn.innerText = 'Kirim JSEA Online';
-        };
+            applyFormData(JSON.parse(raw));
+            alert("Draft dimuat.");
+        });
+
+        document.getElementById("clearDraft").addEventListener("click", () => {
+            if (!confirm("Kosongkan seluruh isian form?")) {
+                return;
+            }
+            document.getElementById("jseaForm").reset();
+            localStorage.removeItem(draftKey);
+            assignAutoJseaNo();
+            assignAutoDocumentNo();
+            assignTanggalBerlaku();
+        });
+
+        document.getElementById("submitSupabase").addEventListener("click", async () => {
+            if (
+                SUPABASE_URL === "GANTI_DENGAN_SUPABASE_URL" ||
+                SUPABASE_ANON_KEY === "GANTI_DENGAN_SUPABASE_ANON_KEY"
+            ) {
+                alert("Isi SUPABASE_URL dan SUPABASE_ANON_KEY dulu di script.");
+                return;
+            }
+
+            const button = document.getElementById("submitSupabase");
+            button.disabled = true;
+            button.textContent = "Submitting...";
+
+            try {
+                const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                const payload = buildSupabasePayload(collectFormData());
+                const { error } = await client.from("jsea_records").insert([payload]);
+                if (error) {
+                    throw error;
+                }
+                setLocalSequence(parseSequenceFromJseaNo(payload.jsea_no));
+                setLocalDocSequence(parseSequenceFromDocumentNo(payload.no_dokumen));
+                alert("Data JSEA berhasil disimpan ke Supabase.");
+                await assignAutoJseaNo();
+                await assignAutoDocumentNo();
+            } catch (err) {
+                alert(`Gagal submit: ${err.message || err}`);
+            } finally {
+                button.disabled = false;
+                button.textContent = "Submit ke Supabase";
+            }
+        });
+
+        assignAutoJseaNo();
+        assignAutoDocumentNo();
+        assignTanggalBerlaku();
     </script>
 </body>
 </html>
