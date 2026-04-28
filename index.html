@@ -1,0 +1,163 @@
+Gemini
+Pembuatan Form JSEA Digital HTML
+Percakapan dengan Gemini
+buatkan file HTML5 dengan template form yang saya kirim
+
+File HTML5 untuk form JSEA (Job Safety Environmental Analysis) telah siap.
+
+Saya telah merancang template ini menggunakan Tailwind CSS dengan gaya desain yang modern, futuristik, dan responsif, sesuai dengan preferensi desain yang sering Anda gunakan untuk dashboard di area produksi.
+
+Fitur Utama Template:
+
+Struktur Data: Mengikuti kolom dari file CSV Anda (Urutan Kerja, Bahaya K3, Dampak/Resiko, dan Tindakan Rekomendasi).
+
+Interaktif: Terdapat tombol "+ Tambah Baris" untuk menambah urutan kerja secara dinamis tanpa batas.
+
+Desain High-Contrast: Menggunakan tema dark mode (slate/navy) yang nyaman dilihat di layar TV monitor pabrik atau tablet.
+
+Input Fleksibel: Field input menggunakan textarea agar teks panjang pada analisis keselamatan tidak terpotong.
+
+Anda dapat membuka file ini di browser apa pun untuk mulai mengisi data secara digital.
+
+Your HTML file is ready
+Ikon HTML
+ form_jsea_digital 
+HTML
+
+
+
+
+
+Gemini adalah AI dan dapat melakukan kesalahan.
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Form JSEA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        input, textarea, select { background: #1e293b !important; border: 1px solid #334155 !important; color: white !important; }
+        input:focus { border-color: #38bdf8 !important; outline: none; }
+        th { background-color: #334155; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto glass rounded-xl shadow-2xl p-6 md:p-10">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-700 pb-6 mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-sky-400">JSEA</h1>
+                <p class="text-slate-400">Job Safety Environmental Analysis</p>
+            </div>
+            <div class="text-left md:text-right text-[10pt] text-slate-500">
+                <p>No. Dokumen: <span class="text-slate-300">FORM/SDI/SHE/01/004/R-00</span></p>
+                <p>Tanggal Berlaku: <span class="text-slate-300">1 Maret 2027</span></p>
+            </div>
+        </div>
+
+        <form id="jseaForm" class="space-y-8">
+            <!-- Header Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">JSEA No.</label>
+                        <input type="text" class="w-full rounded px-3 py-2" placeholder="Nomor dokumen JSEA">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Nama Kontraktor</label>
+                        <input type="text" class="w-full rounded px-3 py-2" placeholder="Masukkan nama kontraktor">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">DEPARTEMEN (Pemilik Pekerjaan)</label>
+                        <input type="text" class="w-full rounded px-3 py-2" placeholder="Contoh: Assy / Maintenance">
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Nama Pekerjaan</label>
+                        <input type="text" class="w-full rounded px-3 py-2" placeholder="Judul aktivitas kerja">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Jenis Pekerjaan</label>
+                        <div class="flex gap-6 mt-2">
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" name="jobType" class="form-radio text-sky-500">
+                                <span class="ml-2">Baru</span>
+                            </label>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" name="jobType" class="form-radio text-sky-500">
+                                <span class="ml-2">Revisi</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Tanggal Pelaksanaan</label>
+                        <input type="date" class="w-full rounded px-3 py-2">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse border border-slate-700">
+                    <thead>
+                        <tr class="text-xs uppercase tracking-wider">
+                            <th class="p-3 border border-slate-700">No</th>
+                            <th class="p-3 border border-slate-700 w-1/4">Urutan Pelaksanaan Kerja</th>
+                            <th class="p-3 border border-slate-700 w-1/4">Bahaya K3 / Aspek Lingkungan</th>
+                            <th class="p-3 border border-slate-700 w-1/4">Dampak / Resiko K3</th>
+                            <th class="p-3 border border-slate-700 w-1/4">Tindakan Rekomendasi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Initial rows via JavaScript -->
+                    </tbody>
+                </table>
+                <button type="button" onclick="addRow()" class="mt-4 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-sm font-semibold transition">+ Tambah Baris</button>
+            </div>
+
+            <!-- APD Section -->
+            <div class="bg-slate-800/50 p-6 rounded-lg border border-slate-700">
+                <label class="block text-sm font-bold mb-3 text-sky-400">Alat Pelindung Diri (APD) yang dibutuhkan:</label>
+                <textarea class="w-full rounded px-3 py-2 h-24" placeholder="Sebutkan APD yang wajib digunakan untuk pekerjaan ini..."></textarea>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-end gap-4 pt-6">
+                <button type="reset" class="px-8 py-3 border border-slate-600 rounded-lg hover:bg-slate-800 transition">Reset Form</button>
+                <button type="submit" class="px-8 py-3 bg-sky-600 hover:bg-sky-500 rounded-lg font-bold shadow-lg shadow-sky-900/20 transition">Simpan & Cetak</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let rowCount = 0;
+        function addRow() {
+            rowCount++;
+            const tbody = document.getElementById('tableBody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="p-2 border border-slate-700 text-center text-sm font-bold text-slate-400">${rowCount}</td>
+                <td class="p-1 border border-slate-700"><textarea class="w-full p-2 text-sm bg-transparent border-none focus:ring-0 outline-none resize-none" rows="3"></textarea></td>
+                <td class="p-1 border border-slate-700"><textarea class="w-full p-2 text-sm bg-transparent border-none focus:ring-0 outline-none resize-none" rows="3"></textarea></td>
+                <td class="p-1 border border-slate-700"><textarea class="w-full p-2 text-sm bg-transparent border-none focus:ring-0 outline-none resize-none" rows="3"></textarea></td>
+                <td class="p-1 border border-slate-700"><textarea class="w-full p-2 text-sm bg-transparent border-none focus:ring-0 outline-none resize-none" rows="3"></textarea></td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        // Initialize with 5 rows
+        for(let i=0; i<5; i++) addRow();
+
+        document.getElementById('jseaForm').onsubmit = (e) => {
+            e.preventDefault();
+            alert('Data JSEA berhasil diproses!');
+        };
+    </script>
+</body>
+</html>
+form_jsea_digital.html
+Menampilkan form_jsea_digital.html.
